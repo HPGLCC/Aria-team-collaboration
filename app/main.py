@@ -8,4 +8,10 @@ app = FastAPI(title="Aria Auth API")
 def on_startup():
     create_db_and_tables()
 
+# Route d'accueil pour éviter l'erreur 404 à la racine "/"
+@app.get("/")
+def home():
+    return {"message": "Bienvenue sur l'API Aria Team Collaboration 🎉"}
+
+# Inclusion du routeur des utilisateurs
 app.include_router(users.router, prefix="/users", tags=["Auth"])
