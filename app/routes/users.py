@@ -182,7 +182,7 @@ def change_password(
     return {"message": "Password updated successfully"}
 
 
-@router.get("/users/validate")
+@router.get("/validate")
 def validate_token(
     current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -194,7 +194,7 @@ def validate_token(
     }
 
 
-@router.post("/users/logout", tags=["Authentication"])
+@router.post("/logout", tags=["Authentication"])
 def logout(current_user: User = Depends(get_current_user)):
     # Ici, tu peux faire des choses comme invalider le token côté base de données, s'il y a un système de blacklist.
     return JSONResponse(
