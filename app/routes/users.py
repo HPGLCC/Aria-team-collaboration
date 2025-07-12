@@ -92,16 +92,29 @@ def get_profile(current_user=Depends(get_current_user), db: Session = Depends(ge
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@router.get("/profile/{user_id}", response_model=schemas.UserProfile)
-def get_user_profile(
+@router.put("/profile/{user_id}", response_model=schemas.UserProfile)
+def update_profile(
     user_id: str,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user)  # sécurité
+    updated_data: schemas.UserUpdate,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
+    if current_user["sub"] != user_id:
+        raise HTTPException(status_code=403, detail="Access denied")
+
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+
+    user.first_name = updated_data.first_name or user.first_name
+    user.last_name = updated_data.last_name or user.last_name
+    user.phone = updated_data.phone or user.phone
+    user.address = updated_data.address or user.address
+
+    db.commit()
+    db.refresh(user)
     return user
+
 
 
 #  METTRE À JOUR LE PROFIL DE L'UTILISATEUR CONNECTÉ
