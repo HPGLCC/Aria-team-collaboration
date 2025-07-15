@@ -44,3 +44,22 @@ class PasswordChange(BaseModel):
 class PasswordChangeFlexible(BaseModel):
     old_password: Optional[str] = None
     new_password: str = Field(..., min_length=8)
+
+
+# Schéma pour la carte bancaire - lecture seule (GET)
+class CarteBancaireOut(BaseModel):
+    id: int
+    numero: str
+    date_expiration: str
+    nom_titulaire: str
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
+# Schéma pour la création d’une carte bancaire (POST)
+class CarteBancaireCreate(BaseModel):
+    numero: str
+    date_expiration: str
+    cvv: str
+    nom_titulaire: str
