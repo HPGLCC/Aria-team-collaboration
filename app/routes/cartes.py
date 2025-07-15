@@ -4,6 +4,7 @@ from app.database import get_db
 from app.models import CarteBancaire, User
 from app.schemas import CarteBancaireCreate, CarteBancaireOut, CarteUpdate
 from app.utils.token import get_current_user
+import os
 
 router = APIRouter(
     prefix="/cartes",
@@ -82,21 +83,16 @@ def cartes_par_utilisateur_id(
     
     return db.query(CarteBancaire).filter_by(utilisateur_id=user_id).all()
 
-
-# 🔐 Route spéciale pour le service de paiement (accès par clé secrète)
+# 🔐 Route spéciale pour le service de paiement (accès par clé secrète via ?token=)
 @router.get("/access/{user_id}", response_model=list[CarteBancaireOut])
 def acces_service_paiement_aux_cartes(
     user_id: str,
     token: str,
     db: Session = Depends(get_db)
 ):
-    # Clé partagée avec le service paiement – ⚠️ à stocker dans .env plus tard
-    CLE_SERVICE_PAIEMENT = "CLE_SUPER_SECRETE_SERVICE_PAIEMENT_123"
-
-    if token != CLE_SERVICE_PAIEMENT:
+    cle_attendue = os.getenv("SERVICE_PAIEMENT_SECRET_KEY")
+    
+    if not cle_attendue or token != cle_attendue:
         raise HTTPException(status_code=403, detail="Clé non autorisée")
 
-    cartes = db.query(CarteBancaire).filter(CarteBancaire.utilisateur_id == user_id).all()
-    return cartes
-
-
+    return db.query(CarteBancaire).filter_by(utilisateur_id=user_id).all()
