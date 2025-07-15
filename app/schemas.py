@@ -63,3 +63,14 @@ class CarteBancaireCreate(BaseModel):
     date_expiration: str
     cvv: str
     nom_titulaire: str
+
+
+class CarteUpdate(BaseModel):
+    numero: Optional[str]
+    date_expiration: Optional[str]
+    cvv: Optional[str]
+    nom_titulaire: Optional[str]
+       
+    class Config:
+        orm_mode = True
+
