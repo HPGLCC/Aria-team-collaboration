@@ -3,6 +3,10 @@ from app.routes import users
 from app.database import create_db_and_tables
 from app.routes import users, cartes  # ← ajoute cartes
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # ← Charge les variables d'environnement
 
 
 app = FastAPI(title="Aria Auth API")
