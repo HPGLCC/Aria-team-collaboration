@@ -3,6 +3,10 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app import models, schemas
 from app.utils.token import get_current_user
+from app.models import CarteBancaire, User
+from app.schemas import CarteBancaireOut, CarteUpdate
+
+
 
 router = APIRouter(
     prefix="/cartes",
