@@ -81,3 +81,22 @@ def cartes_par_utilisateur_id(
         raise HTTPException(status_code=403, detail="Accès interdit")
     
     return db.query(CarteBancaire).filter_by(utilisateur_id=user_id).all()
+
+
+# 🔐 Route spéciale pour le service de paiement (accès par clé secrète)
+@router.get("/access/{user_id}", response_model=list[CarteBancaireOut])
+def acces_service_paiement_aux_cartes(
+    user_id: str,
+    token: str,
+    db: Session = Depends(get_db)
+):
+    # Clé partagée avec le service paiement – ⚠️ à stocker dans .env plus tard
+    CLE_SERVICE_PAIEMENT = "CLE_SUPER_SECRETE_SERVICE_PAIEMENT_123"
+
+    if token != CLE_SERVICE_PAIEMENT:
+        raise HTTPException(status_code=403, detail="Clé non autorisée")
+
+    cartes = db.query(CarteBancaire).filter(CarteBancaire.utilisateur_id == user_id).all()
+    return cartes
+
+
