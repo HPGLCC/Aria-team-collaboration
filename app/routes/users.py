@@ -204,6 +204,7 @@ def validate_token(
         "valid": True,
         "userId": current_user.id,
         "email": current_user.email
+        "role": user.role,
     }
 
 
