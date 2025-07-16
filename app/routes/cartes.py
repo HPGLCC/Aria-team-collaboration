@@ -52,7 +52,7 @@ def supprimer_carte(
     db.commit()
     return
 
-# ✏️ Mettre à jour une carte
+#  Mettre à jour une carte
 @router.put("/{carte_id}", response_model=CarteBancaireOut)
 def mettre_a_jour_carte(
     carte_id: int,
@@ -71,7 +71,7 @@ def mettre_a_jour_carte(
     db.refresh(carte)
     return carte
 
-# 🔍 Récupérer les cartes d'un utilisateur spécifique (admin uniquement ou soi-même)
+# Récupérer les cartes d'un utilisateur spécifique (admin uniquement ou soi-même)
 @router.get("/user/{user_id}", response_model=list[CarteBancaireOut])
 def cartes_par_utilisateur_id(
     user_id: str,
@@ -83,16 +83,10 @@ def cartes_par_utilisateur_id(
     
     return db.query(CarteBancaire).filter_by(utilisateur_id=user_id).all()
 
-# 🔐 Route spéciale pour le service de paiement (accès par clé secrète via ?token=)
+# Route spéciale pour le service de paiement 
 @router.get("/access/{user_id}", response_model=list[CarteBancaireOut])
 def acces_service_paiement_aux_cartes(
     user_id: str,
-    token: str,
     db: Session = Depends(get_db)
 ):
-    cle_attendue = os.getenv("SERVICE_PAIEMENT_SECRET_KEY")
-    
-    if not cle_attendue or token != cle_attendue:
-        raise HTTPException(status_code=403, detail="Clé non autorisée")
-
     return db.query(CarteBancaire).filter_by(utilisateur_id=user_id).all()
