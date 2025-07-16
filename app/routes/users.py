@@ -203,8 +203,8 @@ def validate_token(
     return {
         "valid": True,
         "userId": current_user.id,
-        "email": current_user.email
-        "role": user.role,
+        "email": current_user.email,
+        "role": user.role
     }
 
 
