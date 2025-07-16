@@ -87,7 +87,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
 
 @router.get("/me", response_model=schemas.UserProfile)
 def get_profile(current_user=Depends(get_current_user), db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == current_user["sub"]).first()
+    user = db.query(models.User).filter(models.User.id == current_user.id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
